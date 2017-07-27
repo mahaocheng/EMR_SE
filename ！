@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 import web, datetime, os
-import json
 from bin import map
 from whoosh.index import create_in, open_dir
 from whoosh.fields import *
@@ -28,9 +27,10 @@ if not os.path.exists(indexdir):
     os.mkdir(indexdir)
 
 jieba.load_userdict(open("/home/haohedata/github/EMR_SE/dict/dict.txt"))
-ix = open_dir(indexdir)
+ix = open_dir("index_dir")
 searcher = ix.searcher()
-parser = QueryParser("FJBNAME", ix.schema ,group=qparser.OrGroup)
+parser = QueryParser("content", schema=ix.schema)
+
 urls = (
     '/', 'Index',
     '/hello', 'SayHello',
@@ -66,10 +66,8 @@ class SayHello:
         results = searcher.search(q)
         FPRN_list = []
 	for hit in results:
-	    FPRN_list.append(hit['FJBNAME'])
-            FPRN_list.append(hit['Bingqu'])
-            FPRN_list.append(hit['FPRN'])
-        output = json.dumps(FPRN_list, ensure_ascii = False, encoding = 'utf-8')
+	    FPRN_list.append(hit['FPRN'])
+        output = 'FPRN_list'+str(FPRN_list)
         if form.name == '':
             form.name = "Nobody"
         if form.greet == '':
